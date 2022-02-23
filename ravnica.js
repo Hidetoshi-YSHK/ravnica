@@ -75,14 +75,14 @@ class CardListView extends React.Component {
         const cardInfoList = this.props.cardInfoList;
         let cardViews = [];
         for (const cardInfo of cardInfoList.cards) {
-            let cardName = ""
+            let cardName = "";
             if (KEY_FOREIGN_NAMES in cardInfo) {
                 const foreignNames = cardInfo[KEY_FOREIGN_NAMES];
-                cardName = foreignNames[JAPANESE_INDEX].name
+                cardName = foreignNames[JAPANESE_INDEX].name;
             } else {
-                cardName = cardInfo.name
+                cardName = cardInfo.name;
             }
-            cardViews.push(<CardView cardName={cardName}/>)
+            cardViews.push(<CardView cardName={cardName}/>);
         }
         return ({cardViews});
     }
