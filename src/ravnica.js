@@ -1,3 +1,6 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+
 const API_CARDS = "https://api.magicthegathering.io/v1/cards";
 const PARAM_RANDOM = "random=true";
 
