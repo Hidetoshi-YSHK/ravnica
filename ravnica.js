@@ -36,6 +36,10 @@ var KEY_FOREIGN_NAMES = "foreignNames";
 
 var CARD_LIST_VIEW_ID = "cardListView";
 
+var CARD_VIEW_WIDTH = "360px";
+
+var LANG_JP = "Japanese";
+
 function main() {
     requestRandomCards();
 }
@@ -44,12 +48,13 @@ function requestRandomCards() {
     var targetSets = [SET_NEO, SET_VOW, SET_MID, SET_AFR, SET_STX, SET_KHM, SET_ZNR, SET_ARENA_BASIC_A, SET_ARENA_BASIC_B];
     var paramTargetSets = "set=" + targetSets.join("|");
 
-    var requestCardNum = 10;
+    var requestCardNum = 20;
     var paramRequestCardNum = "pageSize=" + String(requestCardNum);
 
     var params = [PARAM_RANDOM, paramTargetSets, paramRequestCardNum];
 
     var requestUrl = API_CARDS + "?" + params.join("&");
+    console.log(requestUrl);
 
     fetch(requestUrl).then(function (response) {
         if (!response.ok) {
@@ -76,10 +81,120 @@ var CardView = function (_React$Component) {
         key: 'render',
         value: function render() {
             var cardInfo = this.props.cardInfo;
+            console.log(cardInfo);
+            var cardName = cardInfo.name || "";
+            var manaCost = cardInfo.manaCost || "";
+            manaCost = manaCost.replace(/\{W\}/g, "⚪");
+            manaCost = manaCost.replace(/\{B\}/g, "⚫");
+            manaCost = manaCost.replace(/\{U\}/g, "🔵");
+            manaCost = manaCost.replace(/\{R\}/g, "🔴");
+            manaCost = manaCost.replace(/\{G\}/g, "🟢");
+            manaCost = manaCost.replace(/\{X\}/g, "(X)");
+            manaCost = manaCost.replace(/\{0\}/g, "(0)");
+            manaCost = manaCost.replace(/\{1\}/g, "(1)");
+            manaCost = manaCost.replace(/\{2\}/g, "(2)");
+            manaCost = manaCost.replace(/\{3\}/g, "(3)");
+            manaCost = manaCost.replace(/\{4\}/g, "(4)");
+            manaCost = manaCost.replace(/\{5\}/g, "(5)");
+            manaCost = manaCost.replace(/\{6\}/g, "(6)");
+            manaCost = manaCost.replace(/\{7\}/g, "(7)");
+            manaCost = manaCost.replace(/\{8\}/g, "(8)");
+            manaCost = manaCost.replace(/\{9\}/g, "(9)");
+            manaCost = manaCost.replace(/\{10\}/g, "(10)");
+            manaCost = manaCost.replace(/\{11\}/g, "(11)");
+            manaCost = manaCost.replace(/\{12\}/g, "(12)");
+            manaCost = manaCost.replace(/\{/g, "(");
+            manaCost = manaCost.replace(/\}/g, ")");
+            var imageUrl = cardInfo.imageUrl || "";
+            var cardType = cardInfo.type || "";
+            var cardText = cardInfo.text || "";
+
+            if (KEY_FOREIGN_NAMES in cardInfo) {
+                var _iteratorNormalCompletion = true;
+                var _didIteratorError = false;
+                var _iteratorError = undefined;
+
+                try {
+                    for (var _iterator = cardInfo[KEY_FOREIGN_NAMES][Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                        var freignInfo = _step.value;
+
+                        if (freignInfo.language != LANG_JP) {
+                            continue;
+                        }
+                        cardName = freignInfo.name || cardName;
+                        imageUrl = freignInfo.imageUrl || imageUrl;
+                        cardType = freignInfo.type || cardType;
+                        cardText = freignInfo.text || cardText;
+                    }
+                } catch (err) {
+                    _didIteratorError = true;
+                    _iteratorError = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion && _iterator.return) {
+                            _iterator.return();
+                        }
+                    } finally {
+                        if (_didIteratorError) {
+                            throw _iteratorError;
+                        }
+                    }
+                }
+            }
+
             return _react2.default.createElement(
                 'div',
-                { 'class': 'cardView' },
-                cardInfo.name
+                { className: 'cardView', style: {
+                        "width": CARD_VIEW_WIDTH,
+                        "border": "solid 3px",
+                        "marginLeft": "10px",
+                        "marginRight": "10px",
+                        "marginBottom": "20px" } },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'cardNameAndManaCost', style: {
+                            "padding": "5px" } },
+                    _react2.default.createElement(
+                        'span',
+                        null,
+                        cardName
+                    ),
+                    _react2.default.createElement(
+                        'span',
+                        { style: { "float": "right" } },
+                        manaCost
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'cardImage' },
+                    _react2.default.createElement('img', { src: imageUrl, style: { "width": CARD_VIEW_WIDTH } })
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'cardType', style: {
+                            "padding": "5px" } },
+                    _react2.default.createElement(
+                        'b',
+                        null,
+                        _react2.default.createElement(
+                            'span',
+                            null,
+                            cardType
+                        )
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'cardText', style: {
+                            "whiteSpace": "pre-wrap",
+                            "padding": "5px" } },
+                    _react2.default.createElement(
+                        'span',
+                        null,
+                        cardText
+                    )
+                )
             );
         }
     }]);
@@ -97,45 +212,24 @@ var CardListView = function (_React$Component2) {
     }
 
     _createClass(CardListView, [{
+        key: 'renderCardViews',
+        value: function renderCardViews(cardInfoList) {
+            return cardInfoList.cards.map(function (cardInfo, index) {
+                return _react2.default.createElement(CardView, { key: "cardView" + index, cardInfo: cardInfo });
+            });
+        }
+    }, {
         key: 'render',
         value: function render() {
             var cardInfoList = this.props.cardInfoList;
-            var cardViews = [];
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
-
-            try {
-                for (var _iterator = cardInfoList.cards[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var cardInfo = _step.value;
-
-                    var cardName = "";
-                    if (KEY_FOREIGN_NAMES in cardInfo) {
-                        var foreignNames = cardInfo[KEY_FOREIGN_NAMES];
-                        cardName = cardInfo.name;
-                    } else {
-                        cardName = cardInfo.name;
-                    }
-                    cardViews.push(_react2.default.createElement(CardView, { cardName: '{cardName}' }));
-                }
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
-                    }
-                } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
-                }
-            }
-
-            return cardInfoList.cards.map(function (cardInfo) {
-                return _react2.default.createElement(CardView, { cardInfo: cardInfo });
-            });
+            return _react2.default.createElement(
+                'div',
+                { style: {
+                        "display": "flex",
+                        "flexDirection": "row",
+                        "flexWrap": "wrap" } },
+                this.renderCardViews(cardInfoList)
+            );
         }
     }]);
 

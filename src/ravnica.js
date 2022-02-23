@@ -18,6 +18,10 @@ const KEY_FOREIGN_NAMES = "foreignNames"
 
 const CARD_LIST_VIEW_ID = "cardListView"
 
+const CARD_VIEW_WIDTH = "360px"
+
+const LANG_JP = "Japanese"
+
 function main() {
     requestRandomCards()
 }
@@ -36,7 +40,7 @@ function requestRandomCards() {
     ];
     let paramTargetSets = "set=" + targetSets.join("|");
 
-    let requestCardNum = 10;
+    let requestCardNum = 20;
     let paramRequestCardNum = "pageSize=" + String(requestCardNum);
 
     let params = [
@@ -46,6 +50,7 @@ function requestRandomCards() {
     ];
 
     let requestUrl = API_CARDS + "?" + params.join("&");
+    console.log(requestUrl)
 
     fetch(requestUrl).then((response) => {
         if (!response.ok) {
@@ -64,29 +69,90 @@ function requestRandomCards() {
 class CardView extends React.Component {
     render() {
         const cardInfo = this.props.cardInfo;
+        console.log(cardInfo)
+        let cardName = cardInfo.name || "";
+        let manaCost = cardInfo.manaCost || "";
+        manaCost = manaCost.replace(/\{W\}/g, "⚪")
+        manaCost = manaCost.replace(/\{B\}/g, "⚫")
+        manaCost = manaCost.replace(/\{U\}/g, "🔵")
+        manaCost = manaCost.replace(/\{R\}/g, "🔴")
+        manaCost = manaCost.replace(/\{G\}/g, "🟢")
+        manaCost = manaCost.replace(/\{X\}/g, "(X)")
+        manaCost = manaCost.replace(/\{0\}/g, "(0)")
+        manaCost = manaCost.replace(/\{1\}/g, "(1)")
+        manaCost = manaCost.replace(/\{2\}/g, "(2)")
+        manaCost = manaCost.replace(/\{3\}/g, "(3)")
+        manaCost = manaCost.replace(/\{4\}/g, "(4)")
+        manaCost = manaCost.replace(/\{5\}/g, "(5)")
+        manaCost = manaCost.replace(/\{6\}/g, "(6)")
+        manaCost = manaCost.replace(/\{7\}/g, "(7)")
+        manaCost = manaCost.replace(/\{8\}/g, "(8)")
+        manaCost = manaCost.replace(/\{9\}/g, "(9)")
+        manaCost = manaCost.replace(/\{10\}/g, "(10)")
+        manaCost = manaCost.replace(/\{11\}/g, "(11)")
+        manaCost = manaCost.replace(/\{12\}/g, "(12)")
+        manaCost = manaCost.replace(/\{/g, "(")
+        manaCost = manaCost.replace(/\}/g, ")")
+        let imageUrl = cardInfo.imageUrl || "";
+        let cardType = cardInfo.type || "";
+        let cardText = cardInfo.text || "";
+
+        if (KEY_FOREIGN_NAMES in cardInfo) {
+            for (const freignInfo of cardInfo[KEY_FOREIGN_NAMES]) {
+                if (freignInfo.language != LANG_JP) {
+                    continue;
+                }
+                cardName = freignInfo.name || cardName
+                imageUrl = freignInfo.imageUrl || imageUrl
+                cardType = freignInfo.type || cardType
+                cardText = freignInfo.text || cardText
+            }
+        }
+
         return (
-        <div class="cardView">
-            {cardInfo.name}
+        <div className="cardView" style={{
+                "width": CARD_VIEW_WIDTH,
+                "border": "solid 3px",
+                "marginLeft": "10px",
+                "marginRight": "10px",
+                "marginBottom": "20px"}}>
+            <div className="cardNameAndManaCost" style={{
+                "padding": "5px"}}>
+                <span>{cardName}</span>
+                <span style={{"float": "right"}}>{manaCost}</span>
+            </div>
+            <div className="cardImage" >
+                <img src={imageUrl} style={{"width": CARD_VIEW_WIDTH}}></img>
+            </div>
+            <div className="cardType" style={{
+                "padding": "5px"}}>
+                <b><span>{cardType}</span></b>
+            </div>
+            <div className="cardText" style={{
+                "whiteSpace": "pre-wrap",
+                "padding": "5px"}}>
+                <span>{cardText}</span>
+            </div>
         </div>
         );
     }
 }
 
 class CardListView extends React.Component {
+    renderCardViews(cardInfoList) {
+        return cardInfoList.cards.map(
+            (cardInfo, index) => 
+            <CardView key={"cardView" + index} cardInfo={cardInfo} />);
+    }
+
     render() {
         const cardInfoList = this.props.cardInfoList;
-        let cardViews = [];
-        for (const cardInfo of cardInfoList.cards) {
-            let cardName = "";
-            if (KEY_FOREIGN_NAMES in cardInfo) {
-                const foreignNames = cardInfo[KEY_FOREIGN_NAMES];
-                cardName = cardInfo.name;
-            } else {
-                cardName = cardInfo.name;
-            }
-            cardViews.push(<CardView cardName="{cardName}"/>);
-        }
-        return cardInfoList.cards.map((cardInfo) => <CardView cardInfo={cardInfo} />)
+        return (<div style={{
+            "display": "flex",
+            "flexDirection": "row",
+            "flexWrap": "wrap"}}>
+            {this.renderCardViews(cardInfoList)}
+        </div>);
     }
 }
 
