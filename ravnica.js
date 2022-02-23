@@ -51,8 +51,8 @@ function requestRandomCards() {
         }
         return response.json()
     })
-    .then((responseJson) => {
-        alert(responseJson)
+    .then((cardInfoList) => {
+        updateView(cardInfoList)
     })
     .catch((e) => {
         console.log(e);
