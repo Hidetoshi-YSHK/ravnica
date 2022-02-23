@@ -37,6 +37,7 @@ var KEY_FOREIGN_NAMES = "foreignNames";
 var CARD_LIST_VIEW_ID = "cardListView";
 
 var CARD_VIEW_WIDTH = "360px";
+var CARD_IMAGE_WIDTH = "320px";
 
 var LANG_JP = "Japanese";
 
@@ -167,8 +168,10 @@ var CardView = function (_React$Component) {
                 ),
                 _react2.default.createElement(
                     'div',
-                    { className: 'cardImage' },
-                    _react2.default.createElement('img', { src: imageUrl, style: { "width": CARD_VIEW_WIDTH } })
+                    { className: 'cardImage', style: {
+                            "textAlign": "center" } },
+                    _react2.default.createElement('img', { src: imageUrl, style: {
+                            "width": CARD_IMAGE_WIDTH } })
                 ),
                 _react2.default.createElement(
                     'div',

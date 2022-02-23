@@ -19,6 +19,7 @@ const KEY_FOREIGN_NAMES = "foreignNames"
 const CARD_LIST_VIEW_ID = "cardListView"
 
 const CARD_VIEW_WIDTH = "360px"
+const CARD_IMAGE_WIDTH = "320px"
 
 const LANG_JP = "Japanese"
 
@@ -121,8 +122,10 @@ class CardView extends React.Component {
                 <span>{cardName}</span>
                 <span style={{"float": "right"}}>{manaCost}</span>
             </div>
-            <div className="cardImage" >
-                <img src={imageUrl} style={{"width": CARD_VIEW_WIDTH}}></img>
+            <div className="cardImage" style={{
+                "textAlign": "center"}}>
+                <img src={imageUrl} style={{
+                    "width": CARD_IMAGE_WIDTH}}></img>
             </div>
             <div className="cardType" style={{
                 "padding": "5px"}}>
