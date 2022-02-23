@@ -12,7 +12,6 @@ const SET_ARENA_BASIC_A = "ana";
 const SET_ARENA_BASIC_B = "anb";
 
 const KEY_FOREIGN_NAMES = "foreignNames"
-const JAPANESE_INDEX = 4
 
 const CARD_LIST_VIEW_ID = "cardListView"
 
@@ -78,7 +77,7 @@ class CardListView extends React.Component {
             let cardName = "";
             if (KEY_FOREIGN_NAMES in cardInfo) {
                 const foreignNames = cardInfo[KEY_FOREIGN_NAMES];
-                cardName = foreignNames[JAPANESE_INDEX].name;
+                cardName = cardInfo.name;
             } else {
                 cardName = cardInfo.name;
             }
